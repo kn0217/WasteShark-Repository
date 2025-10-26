@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 
-async function setupEndPoint(app) {
+async function setupEndPoint(app, mqttClient) {
 	app.post("/api/users/login", async function(req, res) {
 		let user
 
