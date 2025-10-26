@@ -1,13 +1,8 @@
 const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 
-const authCookie = require(process.cwd() + "/middleware/authCookie.js")
-const method = "post"
-
-async function setupEndPoint(app, route) {
-	// authCookie(app, route, method)
-
-	app[method](route, async function(req, res) {
+async function setupEndPoint(app) {
+	app.post("/users/signup", async function(req, res) {
 		try {
 			const userExists = await User.exists({ email: req.body.email })
 
