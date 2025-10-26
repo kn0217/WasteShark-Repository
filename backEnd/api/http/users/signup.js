@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 
 async function setupEndPoint(app) {
-	app.post("/users/signup", async function(req, res) {
+	app.post("/api/users/signup", async function(req, res) {
 		try {
 			const userExists = await User.exists({ email: req.body.email })
 

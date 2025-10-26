@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 
 async function setupEndPoint(app) {
-	app.post("/users/login", async function(req, res) {
+	app.post("/api/users/login", async function(req, res) {
 		let user
 
 		try {
