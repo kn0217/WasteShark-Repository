@@ -2,11 +2,9 @@ const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 const jwt = require("jsonwebtoken")
 
-const authCookie = require(process.cwd() + "/middleware/authCookie.js")
-const method = "post"
 
-async function setupEndPoint(app, route) {
-	app[method](route, async function(req, res) {
+async function setupEndPoint(app) {
+	app.post("/api/users/signup", async function(req, res) {
 		try {
 			const userExists = await User.exists({ email: req.body.email })
 

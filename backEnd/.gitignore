@@ -1,2 +1,4 @@
 node_modules
+mongo-data
+browsing_history
 .env

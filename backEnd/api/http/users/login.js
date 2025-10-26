@@ -3,15 +3,8 @@ const jwt = require("jsonwebtoken");
 const User = require(process.cwd() + "/schemas/User.js")
 require("dotenv").config()
 
-
-const authCookie = require(process.cwd() + "/middleware/authCookie.js")
-
-const method = "post"
-
-async function setupEndPoint(app, route) {
-	// authCookie(app, route, method)
-
-	app[method](route, async function(req, res) {
+async function setupEndPoint(app) {
+	app.post("/api/users/login", async function(req, res) {
 		let user
 
 		try {
