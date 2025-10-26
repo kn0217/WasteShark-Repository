@@ -15,10 +15,10 @@ function loadApiRoutes() {
 		console.log(`Example app listening on port ${port}`)
 	})
 
-	loadRoutesRecursively("./api", "")
+	loadRoutesRecursively("./api/http", app)
 }
 
-function loadRoutesRecursively(basePath, routePrefix) {
+function loadRoutesRecursively(basePath, ...parameters) {
 	const items = fs.readdirSync(basePath)
 
 	for (const item of items) {
@@ -26,15 +26,11 @@ function loadRoutesRecursively(basePath, routePrefix) {
 		const file = fs.statSync(itemPath)
 
 		if (file.isDirectory()) {
-			const newRoutePrefix = routePrefix + "/" + item
-			loadRoutesRecursively(itemPath, newRoutePrefix)
+			loadRoutesRecursively(itemPath, ...parameters)
 		} else if (file.isFile()) {
-			const currentRoute = routePrefix + "/" + item.replace(".js", "")
 			const endPointModule = require(itemPath)
 
-			console.log("setup endpoint", currentRoute)
-
-			endPointModule(app, currentRoute)
+			endPointModule(...parameters)
 		}
 	}		
 }
