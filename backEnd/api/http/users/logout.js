@@ -1,7 +1,7 @@
 const method = "post"
 
 async function setupEndPoint(app, route) {
-	app[method](route, async function (req, res) {
+	app.post("/api/users/logout", async function(req, res) {
 		try {
 			// Clear the auth cookie
 			res.clearCookie("authToken", {

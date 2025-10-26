@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 const jwt = require("jsonwebtoken")
 
-
 async function setupEndPoint(app) {
 	app.post("/api/users/signup", async function(req, res) {
 		try {
