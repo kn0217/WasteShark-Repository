@@ -7,7 +7,7 @@ async function setupEndPoint(app, route) {
 			res.clearCookie("authToken", {
 				httpOnly: true,
 				sameSite: "strict",
-				secure: false, // set to true if using HTTPS
+				secure: process.env.NODE_ENV === "production", // set to true if using HTTPS
 				path: "/", // must match cookie path used on login
 			})
 			return res.status(200).send({ message: "Logged out successfully" })

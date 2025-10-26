@@ -6,8 +6,6 @@ const authCookie = require(process.cwd() + "/middleware/authCookie.js")
 const method = "post"
 
 async function setupEndPoint(app, route) {
-	// authCookie(app, route, method)
-	console.log("setup route	")
 	app[method](route, async function(req, res) {
 		try {
 			const userExists = await User.exists({ email: req.body.email })

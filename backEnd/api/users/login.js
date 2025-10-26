@@ -56,10 +56,9 @@ async function setupEndPoint(app, route) {
 			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 		})
 
-
 		res.send({
 			success: true,
-			token,
+			token: token,
 		})
 	})
 }
