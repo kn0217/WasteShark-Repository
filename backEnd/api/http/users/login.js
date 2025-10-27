@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken");
 const User = require(process.cwd() + "/schemas/User.js")
-require("dotenv").config()
 
 async function setupEndPoint(app) {
 	app.post("/api/users/login", async function(req, res) {

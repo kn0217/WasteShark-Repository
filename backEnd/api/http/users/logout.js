@@ -10,7 +10,7 @@ async function setupEndPoint(app, route) {
 				secure: process.env.NODE_ENV === "production", // set to true if using HTTPS
 				path: "/", // must match cookie path used on login
 			})
-			return res.status(200).send({ message: "Logged out successfully" })
+			return res.send({ message: "Logged out successfully" })
 		} catch (error) {
 			console.error("Logout error:", error)
 			return res.status(500).send({ error: "Server error during logout" })
