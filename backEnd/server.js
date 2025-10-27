@@ -1,11 +1,15 @@
 const express = require("express")
 const mqtt = require("mqtt")
+const cookieParser = require("cookie-parser")
 const fs = require("fs")
 const app = express()
 const port = 3000
 
+require("dotenv").config();
+
 function loadApiRoutes() {
 	app.use(express.json())
+	app.use(cookieParser())
 
 	app.get("/", (req, res) => {
 		res.send("Hello World!")
