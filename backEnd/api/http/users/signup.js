@@ -22,33 +22,39 @@ async function setupEndPoint(app) {
 				password: hash
 			})
 
-			const token = jwt.sign(
+			const accessToken = jwt.sign(
 				{
-					id: newUser._id,
-					email: newUser.email
+					id: newUser._id.toString(),
+					email: newUser.email,
+					first_name: newUser.first_name,
+					last_name: newUser.last_name,
 				},
-				process.env.JWT_SECRET,
+				process.env.ACCESS_TOKEN_SECRET,
 				{
-					expiresIn: process.env.JWT_EXPIRES_IN || "7d"
+					expiresIn: "15m",
 				}
-			)
+			);
 
-			res.cookie("authToken", token, {
-				httpOnly: true, // prevents JS access (XSS protection)
-				secure: process.env.NODE_ENV === "production", // only send over HTTPS
-				sameSite: "strict", // CSRF protection
+			const refreshToken = jwt.sign(
+				{
+					id: newUser._id.toString()
+				},
+				process.env.REFRESH_TOKEN_SECRET,
+				{
+					expiresIn: "7d",
+				}
+			);
+
+			res.cookie("jwt", refreshToken, {
+				httpOnly: true,                // prevents JS access (XSS protection)
+				secure: false, // only HTTPS in production
+				sameSite: "Lax",            // cross site cookie
 				maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 			})
 
 			res.send({
 				success: true,
-				user: {
-					id: newUser._id,
-					email: newUser.email,
-					first_name: newUser.first_name,
-					last_name: newUser.last_name,
-					token: token,
-				}
+				token: accessToken
 			})
 			
 		} catch (error) {
@@ -65,10 +71,6 @@ async function setupEndPoint(app) {
 				error: "Internal Server Error"
 			})
 		}
-
-		res.send({
-			success: true
-		})
 	})
 }
 

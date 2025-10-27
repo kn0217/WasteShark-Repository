@@ -29,28 +29,40 @@ async function setupEndPoint(app) {
 			})
 		}
 
-		const token = jwt.sign(
+		const accessToken = jwt.sign(
 			{
-				id: user._id,
+				id: user._id.toString(),
 				email: user.email,
+				first_name: user.first_name,
+				last_name: user.last_name
 			},
-			process.env.JWT_SECRET,
+			process.env.ACCESS_TOKEN_SECRET,
 			{
-				expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+				expiresIn: "15m",
 			}
 		);
 
+		const refreshToken = jwt.sign(
+			{
+				id: user._id.toString()
+			},
+			process.env.REFRESH_TOKEN_SECRET,
+			{
+				expiresIn: "7d",
+			}
+		);
 
-		res.cookie("authToken", token, {
+		res.cookie("jwt", refreshToken, {
 			httpOnly: true,                // prevents JS access (XSS protection)
-			secure: process.env.NODE_ENV === "production", // only HTTPS in production
-			sameSite: "strict",            // CSRF protection
+			secure: false, // only HTTPS in production
+			sameSite: "Lax",            // cross site cookie
 			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 		})
 
 		res.send({
 			success: true,
-			token: token,
+			token: accessToken,
+			id: user._id.toString()
 		})
 	})
 }
