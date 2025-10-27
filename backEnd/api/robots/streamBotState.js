@@ -1,24 +1,31 @@
 // api/robots/streamBotState.js
-module.exports = (app, route) => {
-  app.get(route, async (req, res) => {
-    console.log(`Incoming GET request to ${route}`);
 
-    // Set JSON response headers
-    res.setHeader("Content-Type", "application/json");
+function handleStreamBotState(req, res, route) {
+  console.log(`Incoming GET request to ${route}`);
 
-    // Use while(true) loop to continuously send JSON responses
-    // For testing only — this would normally be streaming logic.
-    let count = 0;
-    while (true) {
-      const data = { status: "Roaming", iteration: count++ };
+  // Proper Server-Sent Event headers
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
 
-      // Write chunked response
-      res.write(JSON.stringify(data) + "\n");
+  let count = 0;
+  const interval = setInterval(() => {
+    const data = { status: "Roaming", iteration: count++ };
 
-      console.log("Sent data:", data);
+    // Send SSE-formatted message
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
 
-      // Sleep for 1 second before sending next update
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
+    console.log("Sent data:", data);
+  }, 1000);
+
+  // When the client disconnects
+  req.on("close", () => {
+    clearInterval(interval);
+    console.log("Client disconnected");
   });
+}
+
+// Export the route setup
+module.exports = (app, route) => {
+  app.get(route, handleStreamBotState);
 };

@@ -1,24 +1,20 @@
-const axios = require("axios");
+// CommonJS-compatible EventSource test
+const EventSource = require("eventsource");
 
-async function testStreamBotState() {
-  console.log("Testing GET /api/robots/streamBotState ...");
-  try {
-    const response = await axios.get("http://localhost:3000/api/robots/streamBotState", {
-      responseType: "stream",
-      timeout: 0, // disable timeout for continuous stream
-    });
+console.log("Testing GET /api/robots/streamBotState using EventSource...");
 
-    // Listen to incoming data chunks
-    response.data.on("data", chunk => {
-      console.log("Received chunk:", chunk.toString());
-    });
+// Connect to your backend streaming endpoint
+const eventSource = new EventSource("http://localhost:3000/api/robots/streamBotState");
 
-    response.data.on("end", () => {
-      console.log("Stream ended");
-    });
-  } catch (error) {
-    console.error("Error:", error.message);
-  }
-}
+eventSource.onopen = () => {
+  console.log("Connected to /api/robots/streamBotState");
+};
 
-testStreamBotState();
+eventSource.onmessage = (event) => {
+  console.log("Received event:", event.data);
+};
+
+eventSource.onerror = (err) => {
+  console.error("Stream error or closed:", err);
+  eventSource.close();
+};
