@@ -19,7 +19,8 @@ async function setupEndPoint(app, route) {
                 const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
 
                 // payload may only contain the user id. Load the full user from DB.
-                const userId = payload.id
+                const userId = payload.user_id
+
                 if (!userId) {
                     // invalid payload
                     res.clearCookie('jwt', {
@@ -33,7 +34,7 @@ async function setupEndPoint(app, route) {
 
                 let dbUser
                 try {
-                    dbUser = await User.findById(userId).select('first_name last_name email')
+                    dbUser = await User.findOne({ user_id: userId })
                 } catch (dbErr) {
                     console.error('Error querying user for refresh:', dbErr)
                     return res.status(500).send({ error: 'Internal Server Error', message: 'Failed to load user' })
@@ -52,7 +53,7 @@ async function setupEndPoint(app, route) {
                 // Generate new access token
                 const accessToken = jwt.sign(
                     {
-                        id: dbUser._id.toString(),
+                        user_id: dbUser.user_id,
                         email: dbUser.email,
                         first_name: dbUser.first_name,
                         last_name: dbUser.last_name

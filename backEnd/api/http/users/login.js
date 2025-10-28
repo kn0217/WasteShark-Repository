@@ -31,7 +31,7 @@ async function setupEndPoint(app, mqttClient) {
 
 		const accessToken = jwt.sign(
 			{
-				id: user._id.toString(),
+				user_id: user.user_id,
 				email: user.email,
 				first_name: user.first_name,
 				last_name: user.last_name
@@ -44,7 +44,7 @@ async function setupEndPoint(app, mqttClient) {
 
 		const refreshToken = jwt.sign(
 			{
-				id: user._id.toString()
+				user_id: user.user_id
 			},
 			process.env.REFRESH_TOKEN_SECRET,
 			{
@@ -62,7 +62,7 @@ async function setupEndPoint(app, mqttClient) {
 		res.send({
 			success: true,
 			token: accessToken,
-			id: user._id.toString()
+			user_id: user.user_id
 		})
 	})
 }

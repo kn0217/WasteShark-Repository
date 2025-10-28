@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 const jwt = require("jsonwebtoken")
+const uuid = require("uuid")
 
 async function setupEndPoint(app, mqttClient) {
 	app.post("/api/users/signup", async function(req, res) {
@@ -15,7 +16,10 @@ async function setupEndPoint(app, mqttClient) {
 
 			const hash = await bcrypt.hash(req.body.password, 10)
 
+			const user_id = uuid.v4()
+
 			const newUser = await User.create({
+				user_id: user_id,
 				first_name: req.body.first_name,
 				last_name: req.body.last_name,
 				email: req.body.email,
@@ -24,7 +28,7 @@ async function setupEndPoint(app, mqttClient) {
 
 			const accessToken = jwt.sign(
 				{
-					id: newUser._id.toString(),
+					user_id: newUser.user_id,
 					email: newUser.email,
 					first_name: newUser.first_name,
 					last_name: newUser.last_name,
@@ -37,7 +41,7 @@ async function setupEndPoint(app, mqttClient) {
 
 			const refreshToken = jwt.sign(
 				{
-					id: newUser._id.toString()
+					user_id: newUser.user_id
 				},
 				process.env.REFRESH_TOKEN_SECRET,
 				{
