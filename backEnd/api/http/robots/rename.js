@@ -1,8 +1,9 @@
 const Robot = require(process.cwd() + "/schemas/Robot.js")
 const verifyRobotOwnership = require(process.cwd() + "/middleware/verifyRobotOwnership.js")
+const verifyJWT = require(process.cwd() + "/middleware/verifyJWT")
 
 async function setupEndPoint(app, mqttClient) {
-	app.post("/api/robots/rename", verifyRobotOwnership, async function(req, res) {
+	app.post("/api/robots/rename", verifyRobotOwnership, verifyJWT, async function(req, res) {
 		const newName = {
 			name: req.body.name
 		}
