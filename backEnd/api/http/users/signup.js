@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const User = require(process.cwd() + "/schemas/User.js")
 const jwt = require("jsonwebtoken")
 
-async function setupEndPoint(app) {
+async function setupEndPoint(app, mqttClient) {
 	app.post("/api/users/signup", async function(req, res) {
 		try {
 			const userExists = await User.exists({ email: req.body.email })
