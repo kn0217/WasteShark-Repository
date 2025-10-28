@@ -1,0 +1,4 @@
+1 | curl -fsSL https://tailscale.com/install.sh | sh
+2 | sudo tailscale up
+	authentication link: www.login.tailgate.com/xyz
+3 | ssh raspberrypi@<tailscaleIP>

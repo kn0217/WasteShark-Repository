@@ -1,5 +1,6 @@
 const express = require("express")
 const mqtt = require("mqtt")
+const cookieParser = require("cookie-parser")
 const fs = require("fs")
 const mongoose = require("mongoose")
 const uuid = require("uuid")
@@ -12,6 +13,7 @@ require('dotenv').config()
 
 function loadApiRoutes(mqttClient) {
 	app.use(express.json())
+	app.use(cookieParser())
 
 	app.get("/", (req, res) => {
 		res.send("Hello World!")
