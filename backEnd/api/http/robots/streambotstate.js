@@ -1,7 +1,7 @@
 // api/robots/streamBotState.js
 
 function setupEndPoint(app) {
-    app.get(route, async function(req, res) {
+    app.get("/api/robots/streambotstate", async function(req, res) {
         // Proper Server-Sent Event headers
         res.setHeader("Content-Type", "text/event-stream");
         res.setHeader("Cache-Control", "no-cache");
