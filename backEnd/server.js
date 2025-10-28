@@ -1,11 +1,15 @@
 const express = require("express")
 const mqtt = require("mqtt")
+const cookieParser = require("cookie-parser")
 const fs = require("fs")
 const app = express()
 const port = 3000
 
+require("dotenv").config();
+
 function loadApiRoutes() {
 	app.use(express.json())
+	app.use(cookieParser())
 
 	app.get("/", (req, res) => {
 		res.send("Hello World!")
@@ -15,10 +19,10 @@ function loadApiRoutes() {
 		console.log(`Example app listening on port ${port}`)
 	})
 
-	loadRoutesRecursively("./api", "/api")
+	loadRoutesRecursively("./api/http", app)
 }
 
-function loadRoutesRecursively(basePath, routePrefix) {
+function loadRoutesRecursively(basePath, ...parameters) {
 	const items = fs.readdirSync(basePath)
 
 	for (const item of items) {
@@ -26,15 +30,11 @@ function loadRoutesRecursively(basePath, routePrefix) {
 		const file = fs.statSync(itemPath)
 
 		if (file.isDirectory()) {
-			const newRoutePrefix = routePrefix + "/" + item
-			loadRoutesRecursively(itemPath, newRoutePrefix)
+			loadRoutesRecursively(itemPath, ...parameters)
 		} else if (file.isFile()) {
-			const currentRoute = routePrefix + "/" + item.replace(".js", "")
 			const endPointModule = require(itemPath)
 
-			console.log("setup endpoint", currentRoute)
-
-			endPointModule(app, currentRoute)
+			endPointModule(...parameters)
 		}
 	}		
 }
