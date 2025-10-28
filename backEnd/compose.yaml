@@ -3,10 +3,10 @@ services:
         image: mongo
         restart: always
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: root
+            MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
         volumes:
-            - ~/mongo-data:/data/db
+            - ./mongo-data:/data/db
         ports:
             - "27017:27017"
 
@@ -17,3 +17,13 @@ services:
             - "1883:1883"
         volumes:
             - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+        environment:
+            - MQTT_USERNAME=${MQTT_USERNAME}
+            - MQTT_PASSWORD=${MQTT_PASSWORD}
+        command: >
+            /bin/sh -c "
+                mkdir -p /mosquitto/data &&
+                mosquitto_passwd -b -c /mosquitto/data/passwd \"$$MQTT_USERNAME\" \"$$MQTT_PASSWORD\" &&
+                chmod 600 /mosquitto/data/passwd &&
+                exec mosquitto -c /mosquitto/config/mosquitto.conf
+            "
