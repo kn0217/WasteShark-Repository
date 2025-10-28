@@ -1,5 +1,6 @@
 
 const jwt = require('jsonwebtoken')
+const User = require('../../../schemas/User')
 
 async function setupEndPoint(app, route) {
     app.post("/api/users/refresh", async function(req, res) {
@@ -15,15 +16,46 @@ async function setupEndPoint(app, route) {
 
             // Verify the refresh token
             try {
-                const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
-                
+                const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+
+                // payload may only contain the user id. Load the full user from DB.
+                const userId = payload.id
+                if (!userId) {
+                    // invalid payload
+                    res.clearCookie('jwt', {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+                    })
+
+                    return res.status(401).send({ error: 'Unauthorized', message: 'Invalid refresh token payload' })
+                }
+
+                let dbUser
+                try {
+                    dbUser = await User.findById(userId).select('first_name last_name email')
+                } catch (dbErr) {
+                    console.error('Error querying user for refresh:', dbErr)
+                    return res.status(500).send({ error: 'Internal Server Error', message: 'Failed to load user' })
+                }
+
+                if (!dbUser) {
+                    // User no longer exists - clear cookie and deny
+                    res.clearCookie('jwt', { 
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+                    })
+                    return res.status(401).send({ error: 'Unauthorized', message: 'User not found' })
+                }
+
                 // Generate new access token
                 const accessToken = jwt.sign(
-                    { 
-                        id: user._id.toString(),
-                        email: user.email,
-                        first_name: user.first_name,
-                        last_name: user.last_name
+                    {
+                        id: dbUser._id.toString(),
+                        email: dbUser.email,
+                        first_name: dbUser.first_name,
+                        last_name: dbUser.last_name
                     },
                     process.env.ACCESS_TOKEN_SECRET,
                     { expiresIn: '15m' }
@@ -39,14 +71,15 @@ async function setupEndPoint(app, route) {
                 // Token verification failed
                 res.clearCookie('jwt', {
                     httpOnly: true,
-                    secure: false,
-                    sameSite: 'Lax'
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
                 })
-                
-                return res.status(401).send({ 
-                    error: "Unauthorized",
-                    message: "Invalid refresh token"
-                })
+
+                if (verifyError && verifyError.name === 'TokenExpiredError') {
+                    return res.status(401).send({ error: 'Unauthorized', message: 'Refresh token expired' })
+                }
+
+                return res.status(401).send({ error: 'Unauthorized', message: 'Invalid refresh token' })
             }
 
         } catch (error) {

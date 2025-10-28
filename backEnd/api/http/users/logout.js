@@ -8,8 +8,8 @@ async function setupEndPoint(app, route) {
 			// Clear the auth cookie
 			res.clearCookie("jwt", {
 				httpOnly: true,
-				sameSite: "None",
-				secure: process.env.NODE_ENV === "production", // set to true if using HTTPS
+				sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+				secure: process.env.NODE_ENV === 'production', // set to true if using HTTPS
 			})
 			return res.send({ message: "Logged out successfully" })
 		} catch (error) {

@@ -54,8 +54,8 @@ async function setupEndPoint(app) {
 
 		res.cookie("jwt", refreshToken, {
 			httpOnly: true,                // prevents JS access (XSS protection)
-			secure: false, // only HTTPS in production
-			sameSite: "Lax",            // cross site cookie
+			secure: process.env.NODE_ENV === 'production', // only HTTPS in production
+			sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // None in prod (cross-site), Lax for dev
 			maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 		})
 

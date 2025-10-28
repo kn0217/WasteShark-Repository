@@ -1,7 +1,7 @@
 const verifyJWT = require("../../../middleware/verifyJWT")
 
 async function setupEndPoint(app, route) {
-    app.post("/api/users/test", verifyJWT, async function(req, res) {
+    app.post("/api/users/securedendpoint", verifyJWT, async function(req, res) {
         try {
             res.send({
                 success: true
