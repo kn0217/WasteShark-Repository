@@ -1,5 +1,5 @@
 // api/robots/streamBotState.js
-const verifyJWT = require("../../../middleware/verifyJWT")
+const verifyJWT = require(process.cwd() + "/middleware/verifyJWT")
 
 function setupEndPoint(app) {
     app.get("/api/robots/streambotstate", verifyJWT, async function(req, res) {
