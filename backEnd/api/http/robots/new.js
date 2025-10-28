@@ -1,7 +1,9 @@
+const verifyJWT = require("../../../middleware/verifyJWT")
 const Robot = require(process.cwd() + "/schemas/Robot.js")
 
+
 async function setupEndPoint(app, mqttClient) {
-	app.post("/api/robots/new", async function(req, res) {
+	app.post("/api/robots/new", verifyJWT, async function(req, res) {
 		let robotData
 
 		try {

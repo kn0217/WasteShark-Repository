@@ -1,8 +1,10 @@
+const verifyJWT = require("../../../middleware/verifyJWT")
+
 const Robot = require(process.cwd() + "/schemas/Robot.js")
 const verifyRobotOwnership = require(process.cwd() + "/middleware/verifyRobotOwnership.js")
 
 async function setupEndPoint(app, mqttClient) {
-	app.post("/api/robots/delete", verifyRobotOwnership, async function(req, res) {
+	app.post("/api/robots/delete", verifyRobotOwnership, verifyJWT, async function(req, res) {
 		try {
 			await Robot.updateOne({
 				robot_id: req.body.robotId
