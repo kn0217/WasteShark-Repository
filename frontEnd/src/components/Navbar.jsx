@@ -1,24 +1,66 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import logo from '../assets/logo_transparent.svg'
 
 const Navbar = () => {
-    return (
-    <nav className="flex items-center justify-between p-6 bg-navy text-white shadow-md">
-      {/* Logo Section */}
-      <div>
-        <Link to="/" className="flex items-center">
-          <img src={logo} alt="WasteShark Logo" className="h-10 w-10 mr-3" />
-          <span className="text-xl font-bold">WasteShark</span>
-        </Link>
-      </div>
+  const navigate = useNavigate()
+  const { logout, isAuthenticated } = useAuth()
 
-      {/* Navigation Links */}
-      <div className="flex justify-center space-x-6">
-        <div className="hover:bg-royal/100 px-3 py-2 rounded-md transition">
-          <Link to="/" className="nav-item">Home</Link>
-        </div>
-        <div className="hover:bg-royal/100 px-3 py-2 rounded-md transition">
-          <Link to="/login" className="nav-item">Login</Link>
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
+  return (
+    <nav className="bg-navy text-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-3">
+              <img src={logo} alt="WasteShark Logo" className="h-10" />
+              <span className="text-xl font-bold">WasteShark</span>
+            </Link>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            {!isAuthenticated() ? (
+              <>
+                <Link
+                  to="/"
+                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-royal transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/login"
+                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-royal transition-colors"
+                >
+                  Login
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-royal transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/admin"
+                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-royal transition-colors"
+                >
+                  Admin
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-2 rounded-md text-sm font-medium bg-royal hover:bg-blue-600 transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>
