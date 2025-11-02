@@ -6,12 +6,23 @@ const mongoose = require("mongoose")
 const uuid = require("uuid")
 const bcrypt = require("bcrypt")
 const app = express()
+const cors = require("cors")
 
 const mqttEndpoints = {}
 
 require('dotenv').config()
 
 function loadApiRoutes(mqttClient) {
+
+	const corsOptions = {
+		origin: 'http://localhost:5173',       // front end origin
+		credentials: true,             // allow session cookie from browser to pass through
+		methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+		allowedHeaders: ['Content-Type','Authorization','Accept','Origin'],
+		optionsSuccessStatus: 204
+	}
+
+	app.use(cors(corsOptions))
 	app.use(express.json())
 	app.use(cookieParser())
 
