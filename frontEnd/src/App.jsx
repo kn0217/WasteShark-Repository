@@ -22,6 +22,7 @@ import { AuthProvider } from './context/AuthContext'
 import PrivateRoute from './components/PrivateRoute'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Navbar from './components/Navbar'
 
@@ -40,6 +41,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<><Navbar /><Home /></>} />
             <Route path="/login" element={<><Navbar /><Login /></>} />
+            <Route path="/signup" element={<><Navbar /><Signup /></>} />
             
             {/* Protected Routes: Wrapped in PrivateRoute to enforce authentication */}
             <Route
