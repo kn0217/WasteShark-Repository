@@ -13,18 +13,42 @@ const mqttEndpoints = {}
 require('dotenv').config()
 
 function loadApiRoutes(mqttClient) {
-
+	// CORS Configuration
+	// Allows requests from frontend origin and handles credentials (cookies)
+	// 
+	// CORS ISSUES TO WATCH:
+	// 1. Origin mismatch - Frontend origin must match backend CORS origin
+	// 2. Credentials - Must set credentials: 'include' in frontend fetch calls
+	// 3. Preflight - Browser sends OPTIONS request first for non-simple requests
+	// 
+	// CONFIGURATION:
+	// - Use environment variable FRONTEND_ORIGIN for flexibility
+	// - In production, set FRONTEND_ORIGIN to your frontend domain
+	const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173'
+	
 	const corsOptions = {
-		origin: 'http://localhost:5173',       // front end origin
-		credentials: true,             // allow session cookie from browser to pass through
-		methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-		allowedHeaders: ['Content-Type','Authorization','Accept','Origin'],
-		optionsSuccessStatus: 204
+		origin: frontendOrigin,                      // Frontend origin (Vite default: 5173)
+		credentials: true,                           // REQUIRED: Allow cookies (refresh tokens are HTTP-only)
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Supported HTTP methods
+		allowedHeaders: [                            // Headers frontend can send
+			'Content-Type',
+			'Authorization',                         // Required for JWT Bearer tokens
+			'Accept',
+			'Origin'
+		],
+		exposedHeaders: [],                          // Headers frontend can read from response
+		optionsSuccessStatus: 200,                   // Some browsers need 200 for OPTIONS
+		maxAge: 86400                                // Cache preflight requests for 24 hours
 	}
 
-	app.use(cors(corsOptions))
-	app.use(express.json())
-	app.use(cookieParser())
+
+	app.use(cors(corsOptions)) 	// CORS must be applied BEFORE other middleware and routes
+
+	app.use(express.json()) 	// Parse JSON request bodies
+
+	app.use(cookieParser()) 	// Parse cookies (required for refresh token cookies)
+	
+	console.log(`CORS configured for origin: ${frontendOrigin}`)
 
 	app.get("/", (req, res) => {
 		res.send("Hello World!")

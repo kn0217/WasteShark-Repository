@@ -18,7 +18,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import toast from 'react-hot-toast'
-import { createUser } from '../api/auth'
+import { useAuth } from '../context/AuthContext'
 import logo from '../assets/logo_transparent.svg'
 
 const Signup = () => {
@@ -29,24 +29,27 @@ const Signup = () => {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { signup } = useAuth()
 
   /**
    * Form Submission Handler
    * Implements user registration flow
+   * Uses AuthContext.signup which calls the backend API
    */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      // Create user account
-      const result = await createUser({ firstName, lastName, email, password })
+      // Create user account through AuthContext
+      const result = await signup({ firstName, lastName, email, password })
       if (result.success) {
-        toast.success('Account created successfully!')
+        // Navigate to login page after successful signup
         navigate('/login')
       }
     } catch (error) {
-      toast.error('Signup failed. Please try again.')
+      // Error handling is done in AuthContext, but catch here for safety
+      console.error('Signup error:', error)
     } finally {
       setLoading(false)
     }
