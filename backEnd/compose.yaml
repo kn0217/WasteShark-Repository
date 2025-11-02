@@ -27,3 +27,12 @@ services:
                 chmod 600 /mosquitto/data/passwd &&
                 exec mosquitto -c /mosquitto/config/mosquitto.conf
             "
+
+    ngnix:
+        image: nginx:latest
+        restart: always
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - "80:80"
+        
