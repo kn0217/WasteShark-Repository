@@ -23,7 +23,6 @@ import PrivateRoute from './components/PrivateRoute'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
-import Admin from './pages/Admin'
 import Navbar from './components/Navbar'
 
 function App() {
@@ -49,15 +48,6 @@ function App() {
                 <PrivateRoute>
                   <Navbar />
                   <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <PrivateRoute>
-                  <Navbar />
-                  <Admin />
                 </PrivateRoute>
               }
             />
