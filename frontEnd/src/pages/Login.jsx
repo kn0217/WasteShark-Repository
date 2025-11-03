@@ -15,7 +15,7 @@
  */
 
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import Button from '../components/Button'
@@ -128,9 +128,9 @@ const Login = () => {
             
             <p className="mt-6 text-center text-sm text-gray-400">
               Don't have an account?{' '}
-              <a href="#" className="text-royal-light font-semibold hover:text-royal transition-colors">
+              <Link to="/signup" className="text-royal-light font-semibold hover:text-royal transition-colors">
                 Sign up here
-              </a>
+              </Link>
             </p>
           </div>
         </div>
