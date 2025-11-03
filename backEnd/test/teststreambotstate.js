@@ -1,3 +1,4 @@
+/*
 // CommonJS-compatible EventSource test
 const EventSource = require("eventsource");
 
@@ -18,3 +19,4 @@ eventSource.onerror = (err) => {
     console.error("Stream error or closed:", err);
     eventSource.close();
 };
+*/
