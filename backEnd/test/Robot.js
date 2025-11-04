@@ -64,7 +64,7 @@ describe('Robots tests', () => {
                 .post('/api/robots/fetch')
                 .send({ userId: 'test-user-1' })
 
-            expect(res).to.have.status(403)
+            expect(res).to.have.status(401)
         })
 
         it('fails with an invalid token', async () => {
@@ -82,7 +82,7 @@ describe('Robots tests', () => {
             const res = await chai.request(app)
                 .post('/api/robots/delete')
                 .send({ userId: 'test-user-1', robotId: 'r1' })
-            expect(res).to.have.status(403)
+            expect(res).to.have.status(401)
         })
 
         it('fails with invalid token', async () => {
@@ -127,7 +127,7 @@ describe('Robots tests', () => {
             const res = await chai.request(app)
                 .post('/api/robots/new')
                 .send({ userId: 'test-user-1', robotId: 'r3' })
-            expect(res).to.have.status(403)
+            expect(res).to.have.status(401)
         })
 
         it('fails if robot is not found', async () => {
@@ -175,7 +175,7 @@ describe('Robots tests', () => {
             const res = await chai.request(app)
                 .post('/api/robots/rename')
                 .send({ userId: 'test-user-1', robotId: 'r2', name: 'X' })
-            expect(res).to.have.status(403)
+            expect(res).to.have.status(401)
         })
     })
 
@@ -197,7 +197,7 @@ describe('Robots tests', () => {
                 .post('/api/robots/start')
                 .send({ userId: 'test-user-1', robotId: 'r2' })
 
-            expect(res).to.have.status(403)
+            expect(res).to.have.status(401)
         })
     })
 
@@ -219,7 +219,7 @@ describe('Robots tests', () => {
                 .post('/api/robots/stop')
                 .send({ userId: 'test-user-1', robotId: 'r2' })
 
-            expect(res).to.have.status(403)
+            expect(res).to.have.status(401)
         })
     })
   })

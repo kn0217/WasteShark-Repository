@@ -111,7 +111,7 @@ describe("User tests", () => {
         .post('/api/users/refresh')
         .send();
 
-      expect(res).to.have.status(403);
+      expect(res).to.have.status(401);
       expect(res.body).to.have.property('error');
     });
 
