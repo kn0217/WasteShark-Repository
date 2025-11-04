@@ -18,4 +18,3 @@ eventSource.onerror = (err) => {
     console.error("Stream error or closed:", err);
     eventSource.close();
 };
-
