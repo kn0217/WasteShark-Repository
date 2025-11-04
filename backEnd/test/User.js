@@ -1,28 +1,27 @@
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const { app, loadApiRoutes } = require("../server");
-const jwt = require('jsonwebtoken')
-const User = require('../schemas/User')
-const { connectMongo, disconnectMongo, getMongo } = require('./setup')
+const jwt = require('jsonwebtoken');
+const User = require('../schemas/User');
+const { connectMongo, disconnectMongo, getMongo } = require('./setup');
 
-
-chai.use(chaiHttp)
-const { expect } = chai
+chai.use(chaiHttp);
+const { expect } = chai;
 
 before(async () => {
   await connectMongo(); // Will reuse the same server if already started
-  loadApiRoutes(null)
-})
+  loadApiRoutes(null);
+});
 
 after(async () => {
-    disconnectMongo()
-})
+  disconnectMongo();
+});
 
 describe("User tests", () => {
   const testUser = {
-    first_name: "colin",
-    last_name: "lou",
-    email: "cjlou45@icloud.com",
+    first_name: "cool",
+    last_name: "person",
+    email: "supercoolemail@email.com",
     password: "test123",
   };
 
@@ -32,6 +31,7 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/signup')
         .send(testUser);
+
       expect(res).to.have.status(200);
       expect(res.body).to.have.property('token');
     });
@@ -41,6 +41,7 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/signup')
         .send(testUser);
+
       expect(res).to.have.status(409);
       expect(res.body).to.have.property('error');
     });
@@ -52,11 +53,13 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/login')
         .send({ email: testUser.email, password: testUser.password });
+
       expect(res).to.have.status(200);
       expect(res.body).to.have.property('token');
+
       // Save refresh cookie for later
       this.refreshCookie = res.header['set-cookie'] && res.header['set-cookie'].find(c => c.startsWith('jwt='));
-      expect(this.refreshCookie).to.exist
+      expect(this.refreshCookie).to.exist;
     });
 
     it('fails with wrong password', async () => {
@@ -64,6 +67,7 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/login')
         .send({ email: testUser.email, password: 'wrongpassword' });
+
       expect(res).to.have.status(401);
       expect(res.body).to.have.property('error');
     });
@@ -73,6 +77,7 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/login')
         .send({ email: 'notfound@example.com', password: 'irrelevant' });
+
       expect(res).to.have.status(401);
       expect(res.body).to.have.property('error');
     });
@@ -85,14 +90,17 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/login')
         .send({ email: testUser.email, password: testUser.password });
+
       const refreshCookie = loginRes.header['set-cookie'] && loginRes.header['set-cookie'].find(c => c.startsWith('jwt='));
       expect(refreshCookie).to.exist;
+
       // Call refresh endpoint with cookie
       const res = await chai
         .request(app)
         .post('/api/users/refresh')
         .set('Cookie', refreshCookie)
         .send();
+
       expect(res).to.have.status(200);
       expect(res.body).to.have.property('token');
     });
@@ -102,6 +110,7 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/refresh')
         .send();
+
       expect(res).to.have.status(403);
       expect(res.body).to.have.property('error');
     });
@@ -118,7 +127,7 @@ describe("User tests", () => {
         { expiresIn: '1ms' }
       );
 
-      // wait briefly to ensure the token is expired
+      // Wait briefly to ensure the token is expired
       await new Promise((r) => setTimeout(r, 20));
 
       const res = await chai
@@ -152,14 +161,17 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/login')
         .send({ email: testUser.email, password: testUser.password });
+
       const refreshCookie = loginRes.header['set-cookie'] && loginRes.header['set-cookie'].find(c => c.startsWith('jwt='));
       expect(refreshCookie).to.exist;
+
       // Call logout endpoint with cookie
       const res = await chai
         .request(app)
         .post('/api/users/logout')
         .set('Cookie', refreshCookie)
         .send();
+
       expect(res).to.have.status(200);
     });
 
@@ -168,8 +180,8 @@ describe("User tests", () => {
         .request(app)
         .post('/api/users/logout')
         .send();
+
       expect(res).to.have.status(204);
     });
   });
-
 });
