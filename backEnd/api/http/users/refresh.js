@@ -8,7 +8,7 @@ async function setupEndPoint(app, route) {
             // Check if refresh token cookie exists
             const refreshToken = req.cookies.jwt
             if (!refreshToken) {
-                return res.status(403).send({ 
+                return res.status(401).send({ 
                     error: "Unauthorized",
                     message: "No refresh token provided" 
                 })

@@ -11,7 +11,7 @@ function verifyJWT(req, res, next) {
 
 	// If no bearer token found, no token provided
 	if (!token) {
-		return res.status(403).send({ error: 'No token provided' })
+		return res.status(401).send({ error: 'No token provided' })
 	}
 
 	try {
